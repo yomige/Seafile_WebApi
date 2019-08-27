@@ -1,15 +1,7 @@
-/**
- * Copyright 2017 bejson.com
- */
 package jsonObject;
+
 import java.util.Date;
 
-/**
- * Auto-generated: 2017-08-16 13:8:54
- *
- * @author bejson.com (i@bejson.com)
- * @website http://www.bejson.com/java2pojo/
- */
 public class LibraryHistory {
     private String name;
     private String commit_id;
@@ -46,6 +38,7 @@ public class LibraryHistory {
     public void setCommit_id(String commit_id) {
         this.commit_id = commit_id;
     }
+
     public String getCommit_id() {
         return commit_id;
     }
@@ -53,6 +46,7 @@ public class LibraryHistory {
     public void setTime(Date time) {
         this.time = time;
     }
+
     public Date getTime() {
         return time;
     }
@@ -60,6 +54,7 @@ public class LibraryHistory {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public String getDescription() {
         return description;
     }
@@ -67,6 +62,7 @@ public class LibraryHistory {
     public void setCreator(String creator) {
         this.creator = creator;
     }
+
     public String getCreator() {
         return creator;
     }

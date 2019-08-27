@@ -1,81 +1,155 @@
 package Interface;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.javaws.progress.Progress;
+import jsonObject.*;
+import okhttp3.OkHttpClient;
 
 import java.io.File;
 import java.util.List;
 
-import javax.management.Query;
-
-import jsonObject.DirectoryEntry;
-import jsonObject.FileDetail;
-import jsonObject.FileCommit;
-import jsonObject.Library;
-import jsonObject.LibraryHistory;
-import jsonObject.StarredFile;
-import jsonObject.UploadFileRes;
-import okhttp3.OkHttpClient;
-
 /**
- * Created by Ericwyn on 17-8-15.
+ * Seafile Api 接口
  */
 public interface ApiInterface {
 
-    //Account API
+    /**
+     * 测试服务状态
+     *
+     * @param client
+     * @return
+     */
     String ping(OkHttpClient client);
 
-    String obtainAuthToken(OkHttpClient client,String username,String password);
+    /**
+     * 获取token
+     *
+     * @param client
+     * @param username 账号
+     * @param password 密码
+     * @return
+     */
+    String obtainAuthToken(OkHttpClient client, String username, String password);
 
+    /**
+     * 获取账号信息
+     *
+     * @param client
+     * @param token
+     * @return
+     */
     JSONObject checkAccountInfo(OkHttpClient client, String token);
 
+
+    /**
+     * 获取seafile服务端版本等信息
+     *
+     * @param client
+     * @return
+     */
     JSONObject getServerInformation(OkHttpClient client);
+
+    /**
+     * 列出所有资料库
+     *
+     * @param client
+     * @param token
+     * @return
+     */
+    List<Library> listLibraries(OkHttpClient client, String token);
+
+    /**
+     * 列出某资料库下的所有文件夹
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @return
+     */
+    List<DirectoryEntry> listAllDirEntries(OkHttpClient client, String token, String repo_id);
+
+    /**
+     * 获取上传接口链接
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
+    String getUploadLink(OkHttpClient client, String token, String repo_id, String p);
+
+    /**
+     * 上传文件
+     *
+     * @param client
+     * @param token
+     * @param uploadLink
+     * @param parent_dir
+     * @param relative_path
+     * @param files
+     * @return
+     */
+    List<UploadFileRes> uploadFile(OkHttpClient client, String token, String uploadLink, String parent_dir, String relative_path, File... files);
+
+    /**
+     * 新建文件
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
+    boolean createFile(OkHttpClient client, String token, String repo_id, String p);
+
+    /**
+     * 创建个人资料库
+     *
+     * @param client
+     * @param token
+     * @param libName
+     * @param desc     非必须
+     * @param password 非必须
+     * @return
+     */
+    JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password);
+
 
     //Starred File API
     List<StarredFile> listStarredFiles(OkHttpClient client, String token);
 
-    //Library API
-    List<Library> listLibraries(OkHttpClient client, String token);
 
-    Library getLibraryInfo(OkHttpClient client,String token,String repo_id);
+    Library getLibraryInfo(OkHttpClient client, String token, String repo_id);
 
     List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id);
 
-    JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password);
-
-    boolean deleteLibrary(OkHttpClient client,String token,String repo_id);
+    boolean deleteLibrary(OkHttpClient client, String token, String repo_id);
 
     //File API
-    String getFileDownloadLink(OkHttpClient client,String token,String repo_id,String p,boolean reuse);
+    String getFileDownloadLink(OkHttpClient client, String token, String repo_id, String p, boolean reuse);
 
-    FileDetail getFileDetail(OkHttpClient client,String token,String repo_id,String p);
+    FileDetail getFileDetail(OkHttpClient client, String token, String repo_id, String p);
 
     List<FileCommit> getFileHistory(OkHttpClient client, String token, String repo_id, String p);
 
-    boolean createFile(OkHttpClient client,String token,String repo_id,String p);
 
-    boolean renameFile(OkHttpClient client,String token,String repo_id,String p,String newName);
+    boolean renameFile(OkHttpClient client, String token, String repo_id, String p, String newName);
 
-    boolean moveFile(OkHttpClient client,String token,String repo_id,String p,String dst_repo,String dst_dir);
+    boolean moveFile(OkHttpClient client, String token, String repo_id, String p, String dst_repo, String dst_dir);
 
-    boolean revertFile(OkHttpClient client,String token,String repo_id,String p,String commit_id);
+    boolean revertFile(OkHttpClient client, String token, String repo_id, String p, String commit_id);
 
-    boolean deleteFile(OkHttpClient client,String token,String repo_id,String p);
+    boolean deleteFile(OkHttpClient client, String token, String repo_id, String p);
 
-    String getUploadLink(OkHttpClient client,String token,String repo_id,String p);
+    String getUpdateLink(OkHttpClient client, String token, String repo_id, String p);
 
-    List<UploadFileRes> uploadFile(OkHttpClient client,String token,String uploadLink,String parent_dir,String relative_path,File... files);
-
-    String getUpdateLink(OkHttpClient client,String token,String repo_id,String p);
-
-    boolean updateFile(OkHttpClient client,String token,String updataLink,File file,String target_file);
+    boolean updateFile(OkHttpClient client, String token, String updataLink, File file, String target_file);
 
     //Directory API
     List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p);
 
 //    List<DirectoryEntry> listDirectoryEntriesByID(OkHttpClient client,String token,String repo_id,String id);
 
-    List<DirectoryEntry> listAllDirEntries(OkHttpClient client, String token, String repo_id);
 
     boolean createNewDir(OkHttpClient client, String token, String repo_id, String p);
 
@@ -85,7 +159,7 @@ public interface ApiInterface {
 
     String getDirDownloadToken(OkHttpClient client, String token, String repo_id, String parent_dir, String dirents);
 
-    boolean queryZipProgress(OkHttpClient client,String token,String dirDownloadToken);
+    boolean queryZipProgress(OkHttpClient client, String token, String dirDownloadToken);
 
-    String getDirDownloadLink(OkHttpClient client,String token,String dirDownloadToken);
+    String getDirDownloadLink(OkHttpClient client, String token, String dirDownloadToken);
 }

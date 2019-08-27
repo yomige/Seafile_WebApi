@@ -1,15 +1,5 @@
 package jsonObject;
 
-import java.util.HashMap;
-import java.util.List;
-
-/**
- * the Json Object for Starred File
- * used in list starred files api
- *
- *
- * Created by Ericwyn on 17-8-15.
- */
 public class StarredFile {
     private String repo;
     //create time of unix timestamp

@@ -1,14 +1,5 @@
-/**
- * Copyright 2017 bejson.com
- */
 package jsonObject;
 
-/**
- * Auto-generated: 2017-08-17 11:32:37
- *
- * @author bejson.com (i@bejson.com)
- * @website http://www.bejson.com/java2pojo/
- */
 public class DirectoryEntry {
 
     private String name;

@@ -1,42 +1,44 @@
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
-import java.util.List;
-
+import jsonObject.DirectoryEntry;
 import jsonObject.Library;
 import okhttp3.OkHttpClient;
 
-/**
- * Created by Ericwyn on 17-8-15.
- */
+import java.io.File;
+import java.util.List;
+
+
 public class SeafileApiTest {
-    public static final String SERVICE_URL = "https://cloud.meetwhy.com";
-    public static final String FILE_SERVER_ROOT="https://cloud.meetwhy.com/seafhttp";
+    public static final String SERVICE_URL = "http://10.47.0.172";
+    public static final String FILE_SERVER_ROOT = "http://10.47.0.172/seafhttp";
 
     public static void main(String[] args) {
 
-        OkHttpClient client = new OkHttpClient();
-        SeafileApi api = new SeafileApi(SERVICE_URL,FILE_SERVER_ROOT);
+//       new SeafileApiTest().testPing();
 
-//        String ping = api.ping(client);
-//        System.out.println("ping = " + ping);
+//       new SeafileApiTest().testObtainAuthToken();
 
-//        String token = api.obtainAuthToken(client, Account.username, Account.password);
-//        System.out.println("token = " + token);
+//       new SeafileApiTest().testCheckAccountInfo();
 
-//        JSONObject accountName=api.checkAccountInfo(client,token);
-//        System.out.println("accountName = " + accountName.getString("name"));
-//
-//        JSONObject serverInfo=api.getServerInformation(client);
-//        System.out.println("serverInfo = " + serverInfo.getString("version"));
-//        System.out.println("serverInfo features = " + serverInfo.get("features"));
-//
+//        new SeafileApiTest().testGetServerInformation();
+
+//        new SeafileApiTest().testListLibraries();
+
+//        new SeafileApiTest().testGetUploadLink();
+
+//        new SeafileApiTest().testListAllDirEntries();
+
+//        new SeafileApiTest().testUploadFile();
+
+//        new SeafileApiTest().testCreateFile();
+
+        new SeafileApiTest().testCreateNewLibrary();
+
+
 //        List<StarredFile> starredFiles = api.listStarredFiles(client,token);
 //        System.out.println(starredFiles.get(0));
 //
-//        List<Library> libraries=api.listLibraries(client,token);
-//        for (Library library:libraries){
-//            System.out.println(library.getId());
-//        }
+
 
 //        JSONObject jsonObject=api.createNewLibrary(client,token,"seanote",null,null);
 //        System.out.println(jsonObject.getString("email"));
@@ -76,8 +78,6 @@ public class SeafileApiTest {
 //        api.moveFile(client,token,repo_id,"/test2.seanote",repo_id,"/test");
 //        api.deleteFile(client,token,repo_id,"/test.seanote");
 
-//        String uploadLink=api.getUploadLink(client,token,repo_id,"");
-//        System.out.println(uploadLink);
 //
 //        File file1=new File("testfiles/testfile1.txt");
 //        File file2=new File("testfiles/testfile2.txt");
@@ -110,7 +110,97 @@ public class SeafileApiTest {
 //        System.out.println("dirDownloadFlag1 = " + dirDownloadFlag1);
 
 
-
     }
+
+
+    public void testPing() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+
+        String ping = api.ping(client);
+        System.out.println("ping = " + ping);
+    }
+
+
+    public void testObtainAuthToken() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        System.out.println("token = " + token);
+    }
+
+    public void testCheckAccountInfo() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        JSONObject accountInfo = api.checkAccountInfo(client, token);
+        System.out.println("account info = " + JSON.toJSONString(accountInfo));
+    }
+
+    public void testGetServerInformation() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        JSONObject serverInformation = api.getServerInformation(client);
+        System.out.println("server info = " + JSON.toJSONString(serverInformation));
+    }
+
+    public void testListLibraries() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+
+        List<Library> list = api.listLibraries(client, token);
+        System.out.println(JSONObject.toJSONString(list));
+    }
+
+
+    public void testGetUploadLink() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+
+        String uploadLink = api.getUploadLink(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e", "");
+        System.out.println(uploadLink);
+    }
+
+    public void testListAllDirEntries() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+
+        List<DirectoryEntry> dirs = api.listAllDirEntries(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e");
+        System.out.println(dirs.get(0).getParent_dir());
+    }
+
+
+    public void testUploadFile() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        File file1 = new File("E:/项目相关/徐州纪委/elasticsearch/index/删除所有索引.txt");
+        api.uploadFile(client, token, "http://10.47.0.172/seafhttp/upload-api/434fce3f-e306-45f8-b47c-d6393cc819f8", "/", "", file1);
+    }
+
+
+    public void testCreateFile() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.createFile(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e", "/aaa/aa.txt");
+    }
+
+    public void testCreateNewLibrary() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+
+        JSONObject jsonObject = api.createNewLibrary(client, token, "Personal Lib", "我的个人仓库", "");
+        System.out.println(JSON.toJSONString(jsonObject));
+    }
+
 
 }
