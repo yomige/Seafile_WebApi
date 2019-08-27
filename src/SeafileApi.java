@@ -201,19 +201,7 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * create a new Library
-     *
-     * @param client
-     * @param token
-     * @param libName  the name of the library
-     * @param desc     the description of the creating
-     *                 can be null, will defaults to "new repo"
-     * @param password the password of the library, needed by encrypt library
-     *                 can be null
-     *                 but in my test ,this parameter look likes invalid ?
-     * @return
-     */
+
     @Override
     public JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password) {
         FormBody.Builder builder = new FormBody.Builder()
@@ -278,17 +266,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-    /**
-     * return the file download link
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p
-     * @param reuse   if you want the generated download link can be accessed more than once in one hour.
-     *                set this parameter be true
-     * @return
-     */
     @Override
     public String getFileDownloadLink(OkHttpClient client, String token, String repo_id, String p, boolean reuse) {
         String reuse_Temp = reuse ? "&reuse=1" : "";

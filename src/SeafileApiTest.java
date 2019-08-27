@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jsonObject.DirectoryEntry;
 import jsonObject.Library;
+import jsonObject.UploadFileRes;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -32,16 +33,14 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testCreateFile();
 
-        new SeafileApiTest().testCreateNewLibrary();
+//        new SeafileApiTest().testCreateNewLibrary();
+
+        new SeafileApiTest().testGetFileDownloadLink();
 
 
 //        List<StarredFile> starredFiles = api.listStarredFiles(client,token);
 //        System.out.println(starredFiles.get(0));
 //
-
-
-//        JSONObject jsonObject=api.createNewLibrary(client,token,"seanote",null,null);
-//        System.out.println(jsonObject.getString("email"));
 
 //        String deleteLibName="seanote";
 //        String delete_repo_id;
@@ -63,8 +62,6 @@ public class SeafileApiTest {
 //        List<LibraryHistory> historyLists=api.getLibraryHistory(client,token,repo_id);
 //        System.out.println(historyLists.get(0).getName());
 
-//        String downloadLink=api.getFileDownloadLink(client,token,repo_id,"/头像.png",true);
-//        System.out.println("downloadLink = " + downloadLink);
 
 //        FileDetail fileDetail = api.getFileDetail(client, token, repo_id, "/头像.png");
 //        String fileName = fileDetail.getName();
@@ -181,7 +178,8 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
         File file1 = new File("E:/项目相关/徐州纪委/elasticsearch/index/删除所有索引.txt");
-        api.uploadFile(client, token, "http://10.47.0.172/seafhttp/upload-api/434fce3f-e306-45f8-b47c-d6393cc819f8", "/", "", file1);
+        List<UploadFileRes> uploadFileResList = api.uploadFile(client, token, "http://10.47.0.172/seafhttp/upload-api/434fce3f-e306-45f8-b47c-d6393cc819f8", "/", "", file1);
+        System.out.println(uploadFileResList.size());
     }
 
 
@@ -200,6 +198,14 @@ public class SeafileApiTest {
 
         JSONObject jsonObject = api.createNewLibrary(client, token, "Personal Lib", "我的个人仓库", "");
         System.out.println(JSON.toJSONString(jsonObject));
+    }
+
+    public void testGetFileDownloadLink(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        String downloadLink = api.getFileDownloadLink(client,token,"0de4d65b-732a-4d13-8304-d4f2bc26437e","/删除所有索引.txt",true);
+        System.out.println(downloadLink);
     }
 
 

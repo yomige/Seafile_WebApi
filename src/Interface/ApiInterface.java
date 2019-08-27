@@ -115,6 +115,19 @@ public interface ApiInterface {
     JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password);
 
 
+    /**
+     * 获取文件下载链接
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p       文件路径
+     * @param reuse   下载链接是否复用
+     * @return
+     */
+    String getFileDownloadLink(OkHttpClient client, String token, String repo_id, String p, boolean reuse);
+
+
     //Starred File API
     List<StarredFile> listStarredFiles(OkHttpClient client, String token);
 
@@ -124,9 +137,6 @@ public interface ApiInterface {
     List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id);
 
     boolean deleteLibrary(OkHttpClient client, String token, String repo_id);
-
-    //File API
-    String getFileDownloadLink(OkHttpClient client, String token, String repo_id, String p, boolean reuse);
 
     FileDetail getFileDetail(OkHttpClient client, String token, String repo_id, String p);
 
