@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.aitlp</groupId>
-    <artifactId>g</artifactId>
+    <artifactId>Seafile_WebApi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Seafile_WebApi</name>
     <description>Seafile Java Api</description>
