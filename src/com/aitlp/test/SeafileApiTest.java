@@ -1,8 +1,11 @@
+package com.aitlp.test;
+
+import com.aitlp.impl.SeafileApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import jsonObject.DirectoryEntry;
-import jsonObject.Library;
-import jsonObject.UploadFileRes;
+import com.aitlp.data.DirectoryEntry;
+import com.aitlp.data.Library;
+import com.aitlp.data.UploadFileRes;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -35,7 +38,9 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testCreateNewLibrary();
 
-        new SeafileApiTest().testGetFileDownloadLink();
+//        new SeafileApiTest().testDeleteLibrary();
+
+//        new SeafileApiTest().testGetFileDownloadLink();
 
 
 //        List<StarredFile> starredFiles = api.listStarredFiles(client,token);
@@ -62,7 +67,6 @@ public class SeafileApiTest {
 //        List<LibraryHistory> historyLists=api.getLibraryHistory(client,token,repo_id);
 //        System.out.println(historyLists.get(0).getName());
 
-
 //        FileDetail fileDetail = api.getFileDetail(client, token, repo_id, "/头像.png");
 //        String fileName = fileDetail.getName();
 //        String fileId = fileDetail.getId();
@@ -70,20 +74,11 @@ public class SeafileApiTest {
 //        List<FileCommit> fileHistories=api.getFileHistory(client,token,repo_id,"/头像.png");
 //        System.out.println(fileHistories.get(0).getId());
 
-//        api.createFile(client,token,repo_id,"/test.seanote");
+
 //        api.renameFile(client,token,repo_id,"/test.seanote","test2.seanote");
 //        api.moveFile(client,token,repo_id,"/test2.seanote",repo_id,"/test");
 //        api.deleteFile(client,token,repo_id,"/test.seanote");
 
-//
-//        File file1=new File("testfiles/testfile1.txt");
-//        File file2=new File("testfiles/testfile2.txt");
-//        if(file1.isFile() && file2.isFile()){
-//            List<UploadFileRes> uploadFileResList=api.uploadFile(client,token,uploadLink,"/test/upload/","",file1,file2);
-//            for (UploadFileRes res:uploadFileResList){
-//                System.out.println(res.getId());
-//            }
-//        }
 
 //        String updateLink=api.getUpdateLink(client,token,repo_id,"");
 //        System.out.println(updateLink);
@@ -188,7 +183,7 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
 
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        api.createFile(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e", "/aaa/aa.txt");
+        api.createFile(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e", "/aaa/aa1.txt");
     }
 
     public void testCreateNewLibrary() {
@@ -196,8 +191,15 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
 
-        JSONObject jsonObject = api.createNewLibrary(client, token, "Personal Lib", "我的个人仓库", "");
+        JSONObject jsonObject = api.createNewLibrary(client, token, "Personal Lib", "我的个人仓库", "Passw0rd");
         System.out.println(JSON.toJSONString(jsonObject));
+    }
+
+    public void testDeleteLibrary(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.deleteLibrary(client,token,"0bcd60f9-3a9a-4498-b1b8-8a365b0c1428");
     }
 
     public void testGetFileDownloadLink(){

@@ -1,4 +1,4 @@
-package jsonObject;
+package com.aitlp.data;
 
 public class FileCommit {
     private int rev_file_size;

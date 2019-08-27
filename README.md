@@ -51,7 +51,7 @@ Seafile_webapi is the Web api of Seafile implemented by java,all of them base on
     
     OkHttpClient client = new OkHttpClient();
     
-    SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+    com.aitlp.impl.SeafileApi api = new com.aitlp.impl.SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
     String token = api.obtainAuthToken(client, Account.username, Account.password);
     
     System.out.println("token = " + token);
@@ -63,4 +63,4 @@ Seafile_webapi is the Web api of Seafile implemented by java,all of them base on
     
 ## Complete documentation
  - You can see the Complete documentation of Seafile Web Api in [Seafile-WebAPI-V2.1](https://manual.seafile.com/develop/web_api_v2.1.html), 
- - The more examples of Seafile_WebAPI_JAVA , you can see in `SeafileApiTest.java`
+ - The more examples of Seafile_WebAPI_JAVA , you can see in `com.aitlp.test.SeafileApiTest.java`

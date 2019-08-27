@@ -1,4 +1,4 @@
-package jsonObject;
+package com.aitlp.data;
 
 import java.util.Date;
 

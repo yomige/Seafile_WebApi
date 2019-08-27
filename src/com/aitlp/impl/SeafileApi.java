@@ -1,3 +1,6 @@
+package com.aitlp.impl;
+
+import com.aitlp.ApiInterface;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
@@ -6,14 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import Interface.ApiInterface;
-import jsonObject.DirectoryEntry;
-import jsonObject.FileDetail;
-import jsonObject.FileCommit;
-import jsonObject.Library;
-import jsonObject.LibraryHistory;
-import jsonObject.StarredFile;
-import jsonObject.UploadFileRes;
+import com.aitlp.data.DirectoryEntry;
+import com.aitlp.data.FileDetail;
+import com.aitlp.data.FileCommit;
+import com.aitlp.data.Library;
+import com.aitlp.data.LibraryHistory;
+import com.aitlp.data.StarredFile;
+import com.aitlp.data.UploadFileRes;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -234,15 +236,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * you can use this method to dele the library
-     * i only test it to delete the no-encryption library
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @return
-     */
     @Override
     public boolean deleteLibrary(OkHttpClient client, String token, String repo_id) {
         Request request = new Request.Builder()
@@ -538,7 +531,7 @@ public class SeafileApi implements ApiInterface {
      *                      such upload a file 'test.txt' to the path '/upload/upload2/upload3' of a library
      *                      you can use this method like that
      *                      <p>
-     *                      new SeafileApi.uploadFile(client,token,uploadLink,"/upload/upload2/upload3/","",new File("test.txt"));
+     *                      new com.aitlp.impl.SeafileApi.uploadFile(client,token,uploadLink,"/upload/upload2/upload3/","",new File("test.txt"));
      * @param files
      * @return
      */
