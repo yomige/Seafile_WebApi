@@ -79,13 +79,13 @@ public interface ApiInterface {
     String getUploadLink(OkHttpClient client, String token, String repo_id, String p);
 
     /**
-     * 上传文件
+     * 上传文件（可多文件上传）
      *
      * @param client
      * @param token
      * @param uploadLink
-     * @param parent_dir
-     * @param relative_path
+     * @param parent_dir must endswith "/"
+     * @param relative_path must NOT startswith "/"
      * @param files
      * @return
      */

@@ -133,13 +133,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * list all the library,can get the repo_id of the libraries
-     *
-     * @param client
-     * @param token
-     * @return
-     */
     @Override
     public List<Library> listLibraries(OkHttpClient client, String token) {
         Request request = new Request.Builder()
@@ -517,24 +510,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * the upload file method
-     * You can upload multiple files at once
-     *
-     * @param client
-     * @param token
-     * @param uploadLink
-     * @param parent_dir    must endswith "/"
-     * @param relative_path must NOT startswith "/" ,
-     *                      but in my test , this parameter was always invalid
-     *                      so i suggest that use the parameter 'parent_dir' to define the upload path of the file
-     *                      such upload a file 'test.txt' to the path '/upload/upload2/upload3' of a library
-     *                      you can use this method like that
-     *                      <p>
-     *                      new com.aitlp.impl.SeafileApi.uploadFile(client,token,uploadLink,"/upload/upload2/upload3/","",new File("test.txt"));
-     * @param files
-     * @return
-     */
     @Override
     public List<UploadFileRes> uploadFile(OkHttpClient client, String token, String uploadLink, String parent_dir, String relative_path, File... files) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
