@@ -133,19 +133,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-
-    /**
-     * notice
-     * when you use this method to get the DirectoryEntry of the dir ,the parent_dir maybe is null
-     * if you want to get all parameter in the DirectoryEntry of the dir ,you need to use the next method
-     * List<DirectoryEntry> listAllDirEntries()
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p
-     * @return
-     */
     @Override
     public List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p) {
         Request request = new Request.Builder()
