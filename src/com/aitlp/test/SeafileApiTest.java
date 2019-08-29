@@ -36,7 +36,7 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testCreateFile();
 
-//        new SeafileApiTest().testCreateNewLibrary();
+        new SeafileApiTest().testCreateNewLibrary();
 
 //        new SeafileApiTest().testDeleteLibrary();
 
@@ -76,11 +76,7 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testGetDirDownloadToken();
 
-        new SeafileApiTest().testGetDirDownloadLink();
-
-//        boolean dirDownloadFlag1 = api.queryZipProgress(client,token,"66b333cb-7800-4829-bb86-e2d3d715b84d");
-//        System.out.println("dirDownloadFlag1 = " + dirDownloadFlag1);
-
+//        new SeafileApiTest().testGetDirDownloadLink();
 
     }
 
@@ -179,7 +175,7 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
 
-        JSONObject jsonObject = api.createNewLibrary(client, token, "Personal Lib", "我的个人仓库", "Passw0rd");
+        JSONObject jsonObject = api.createNewLibrary(client, token, "Personal", "我的个人仓库", "Passw0rd");
         System.out.println(JSON.toJSONString(jsonObject));
     }
 
