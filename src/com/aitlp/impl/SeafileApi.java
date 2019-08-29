@@ -1,28 +1,15 @@
 package com.aitlp.impl;
 
 import com.aitlp.ApiInterface;
+import com.aitlp.data.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import com.aitlp.data.DirectoryEntry;
-import com.aitlp.data.FileDetail;
-import com.aitlp.data.FileCommit;
-import com.aitlp.data.Library;
-import com.aitlp.data.LibraryHistory;
-import com.aitlp.data.StarredFile;
-import com.aitlp.data.UploadFileRes;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * 接口实现
@@ -73,7 +60,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-
     @Override
     public JSONObject checkAccountInfo(OkHttpClient client, String token) {
         Request request = new Request.Builder()
@@ -92,7 +78,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-
     @Override
     public JSONObject getServerInformation(OkHttpClient client) {
         Request request = new Request.Builder()
@@ -102,31 +87,6 @@ public class SeafileApi implements ApiInterface {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             return parseJson(response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * list all starred files
-     *
-     * @param client
-     * @param token
-     * @return
-     */
-    @Override
-    public List<StarredFile> listStarredFiles(OkHttpClient client, String token) {
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .header("Accept", "application/json")
-                .header("indent", "4")
-                .get()
-                .url(SERVICE_URL + "/api2/starredfiles/")
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            return JSON.parseArray(response.body().string(), StarredFile.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,27 +111,22 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * use the repo_id to get the library info
-     * the repo_id can get by method : List<Library> listLibraries(OkHttpClient client, String token)
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @return
-     */
     @Override
-    public Library getLibraryInfo(OkHttpClient client, String token, String repo_id) {
+    public List<DirectoryEntry> listAllDirEntries(OkHttpClient client, String token, String repo_id) {
         Request request = new Request.Builder()
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", "Token " + token)
-                .header("Accept", "application/json")
-                .header("indent", "4")
+                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/dir/?t=d&recursive=1")
                 .get()
-                .url(SERVICE_URL + "/api2/repos/" + repo_id)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return JSON.parseObject(response.body().string(), Library.class);
+            if (response.isSuccessful()) {
+                return JSONObject.parseArray(response.body().string(), DirectoryEntry.class);
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -179,23 +134,86 @@ public class SeafileApi implements ApiInterface {
     }
 
     @Override
-    public List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id) {
+    public String getUploadLink(OkHttpClient client, String token, String repo_id, String p) {
         Request request = new Request.Builder()
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", "Token " + token)
-                .header("Accept", "application/json")
-                .header("indent", "4")
+                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/upload-link/?p=" + p)
                 .get()
-                .url(SERVICE_URL + "/api/v2.1/repos/" + repo_id + "/history/")
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return JSONObject.parseArray(parseJson(response.body().string()).getString("data"), LibraryHistory.class);
+            if (response.isSuccessful()) {
+                return response.body().string().replaceAll("\"", "");
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    @Override
+    public List<UploadFileRes> uploadFile(OkHttpClient client, String token, String uploadLink, String parent_dir, String relative_path, File... files) {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
+
+        for (File file : files) {
+            builder.addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("application/octet-stream"), file));
+        }
+
+        builder.addFormDataPart("parent_dir", parent_dir);
+        builder.addFormDataPart("relative_path", relative_path);
+        RequestBody body = builder.build();
+
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .post(body)
+                .url(uploadLink + "?ret-json=1")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return JSONObject.parseArray(response.body().string(), UploadFileRes.class);
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean createFile(OkHttpClient client, String token, String repo_id, String p) {
+        RequestBody body = new FormBody.Builder()
+                .add("operation", "create")
+                .build();
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/file/?p=" + p)
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return true;
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+                return false;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     @Override
     public JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password) {
@@ -277,6 +295,131 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
+    @Override
+    public boolean createNewAccount(OkHttpClient client, String token, String email, String password) {
+        RequestBody body = new FormBody.Builder()
+                .add("password", password)
+                .build();
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .url(SERVICE_URL + "/api2/accounts/" + email + "/")
+                .put(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return true;
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteAccount(OkHttpClient client, String token, String email) {
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .url(SERVICE_URL + "/api2/accounts/" + email+"/")
+                .delete()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                System.out.println(response.code());
+                return true;
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    /**
+     * list all starred files
+     *
+     * @param client
+     * @param token
+     * @return
+     */
+    @Override
+    public List<StarredFile> listStarredFiles(OkHttpClient client, String token) {
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .get()
+                .url(SERVICE_URL + "/api2/starredfiles/")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return JSON.parseArray(response.body().string(), StarredFile.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * use the repo_id to get the library info
+     * the repo_id can get by method : List<Library> listLibraries(OkHttpClient client, String token)
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @return
+     */
+    @Override
+    public Library getLibraryInfo(OkHttpClient client, String token, String repo_id) {
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .get()
+                .url(SERVICE_URL + "/api2/repos/" + repo_id)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return JSON.parseObject(response.body().string(), Library.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id) {
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .header("Accept", "application/json")
+                .header("indent", "4")
+                .get()
+                .url(SERVICE_URL + "/api/v2.1/repos/" + repo_id + "/history/")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return JSONObject.parseArray(parseJson(response.body().string()).getString("data"), LibraryHistory.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     /**
      * get file detail
      *
@@ -323,33 +466,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    @Override
-    public boolean createFile(OkHttpClient client, String token, String repo_id, String p) {
-        RequestBody body = new FormBody.Builder()
-                .add("operation", "create")
-                .build();
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .header("Accept", "application/json")
-                .header("indent", "4")
-                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/file/?p=" + p)
-                .post(body)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return true;
-            } else {
-                System.out.println(response.code());
-                System.out.println(response.body().string());
-                return false;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     @Override
     public boolean renameFile(OkHttpClient client, String token, String repo_id, String p, String newName) {
@@ -475,72 +591,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-
-    /**
-     * get the upload link before upload file
-     * <p>
-     * look likes that this link is always point to the library's root path , so the p maybe a invalid parameter
-     * 测试中发现这个链接似乎只会指向资料库的根目录。即使传入了p，所以p似乎是一个无效的参数？
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p       p is the upload dir of the link ,use "/" as default;
-     * @return
-     */
-    @Override
-    public String getUploadLink(OkHttpClient client, String token, String repo_id, String p) {
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/upload-link/?p=" + p)
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return response.body().string().replaceAll("\"", "");
-            } else {
-                System.out.println(response.code());
-                System.out.println(response.body().string());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public List<UploadFileRes> uploadFile(OkHttpClient client, String token, String uploadLink, String parent_dir, String relative_path, File... files) {
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        builder.setType(MultipartBody.FORM);
-
-        for (File file : files) {
-            builder.addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("application/octet-stream"), file));
-        }
-
-        builder.addFormDataPart("parent_dir", parent_dir);
-        builder.addFormDataPart("relative_path", relative_path);
-        RequestBody body = builder.build();
-
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .post(body)
-                .url(uploadLink + "?ret-json=1")
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return JSONObject.parseArray(response.body().string(), UploadFileRes.class);
-            } else {
-                System.out.println(response.code());
-                System.out.println(response.body().string());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * look likes that this link is always point to the library's root path , the p maybe a invalid parameter
@@ -688,27 +738,6 @@ public class SeafileApi implements ApiInterface {
 //        return null;
 //    }
 
-    @Override
-    public List<DirectoryEntry> listAllDirEntries(OkHttpClient client, String token, String repo_id) {
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/dir/?t=d&recursive=1")
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return JSONObject.parseArray(response.body().string(), DirectoryEntry.class);
-            } else {
-                System.out.println(response.code());
-                System.out.println(response.body().string());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     public boolean createNewDir(OkHttpClient client, String token, String repo_id, String p) {

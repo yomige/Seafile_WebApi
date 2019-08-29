@@ -39,7 +39,6 @@ public interface ApiInterface {
      */
     JSONObject checkAccountInfo(OkHttpClient client, String token);
 
-
     /**
      * 获取seafile服务端版本等信息
      *
@@ -73,7 +72,7 @@ public interface ApiInterface {
      * @param client
      * @param token
      * @param repo_id
-     * @param p
+     * @param p       测试中发现这个链接似乎只会指向资料库的根目录。即使传入了p，所以p似乎是一个无效的参数？
      * @return
      */
     String getUploadLink(OkHttpClient client, String token, String repo_id, String p);
@@ -84,7 +83,7 @@ public interface ApiInterface {
      * @param client
      * @param token
      * @param uploadLink
-     * @param parent_dir must endswith "/"
+     * @param parent_dir    must endswith "/"
      * @param relative_path must NOT startswith "/"
      * @param files
      * @return
@@ -114,6 +113,15 @@ public interface ApiInterface {
      */
     JSONObject createNewLibrary(OkHttpClient client, String token, String libName, String desc, String password);
 
+    /**
+     * 删除资料库
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @return
+     */
+    boolean deleteLibrary(OkHttpClient client, String token, String repo_id);
 
     /**
      * 获取文件下载链接
@@ -127,6 +135,27 @@ public interface ApiInterface {
      */
     String getFileDownloadLink(OkHttpClient client, String token, String repo_id, String p, boolean reuse);
 
+    /**
+     * 创建新账号
+     *
+     * @param client
+     * @param token
+     * @param email
+     * @param password
+     * @return
+     */
+    boolean createNewAccount(OkHttpClient client, String token, String email, String password);
+
+    /**
+     * 删除账号
+     *
+     * @param client
+     * @param token
+     * @param email
+     * @return
+     */
+    boolean deleteAccount(OkHttpClient client, String token, String email);
+
 
     //Starred File API
     List<StarredFile> listStarredFiles(OkHttpClient client, String token);
@@ -136,7 +165,6 @@ public interface ApiInterface {
 
     List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id);
 
-    boolean deleteLibrary(OkHttpClient client, String token, String repo_id);
 
     FileDetail getFileDetail(OkHttpClient client, String token, String repo_id, String p);
 

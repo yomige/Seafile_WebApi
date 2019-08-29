@@ -13,8 +13,8 @@ import java.util.List;
 
 
 public class SeafileApiTest {
-    public static final String SERVICE_URL = "http://10.47.0.172";
-    public static final String FILE_SERVER_ROOT = "http://10.47.0.172/seafhttp";
+    public static final String SERVICE_URL = "http://10.47.0.172:8000";
+    public static final String FILE_SERVER_ROOT = "http://10.47.0.172:8082";
 
     public static void main(String[] args) {
 
@@ -42,6 +42,9 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testGetFileDownloadLink();
 
+//        new SeafileApiTest().testCreateNewAccount();
+
+        new SeafileApiTest().testDeleteAccount();
 
 //        List<StarredFile> starredFiles = api.listStarredFiles(client,token);
 //        System.out.println(starredFiles.get(0));
@@ -195,19 +198,33 @@ public class SeafileApiTest {
         System.out.println(JSON.toJSONString(jsonObject));
     }
 
-    public void testDeleteLibrary(){
+    public void testDeleteLibrary() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        api.deleteLibrary(client,token,"0bcd60f9-3a9a-4498-b1b8-8a365b0c1428");
+        api.deleteLibrary(client, token, "0bcd60f9-3a9a-4498-b1b8-8a365b0c1428");
     }
 
-    public void testGetFileDownloadLink(){
+    public void testGetFileDownloadLink() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        String downloadLink = api.getFileDownloadLink(client,token,"0de4d65b-732a-4d13-8304-d4f2bc26437e","/删除所有索引.txt",true);
+        String downloadLink = api.getFileDownloadLink(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e", "/删除所有索引.txt", true);
         System.out.println(downloadLink);
+    }
+
+    public void testCreateNewAccount() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.createNewAccount(client, token, "hahaha@gmail.com", "Passw0rd");
+    }
+
+    public void testDeleteAccount() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.deleteAccount(client, token, "wwb@gmail.com");
     }
 
 
