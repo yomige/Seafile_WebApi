@@ -30,6 +30,8 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testListAllDirEntries();
 
+//        new SeafileApiTest().testListDirEntriesByP();
+
 //        new SeafileApiTest().testUploadFile();
 
 //        new SeafileApiTest().testCreateFile();
@@ -54,33 +56,27 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testGetFileHistory();
 
-        new SeafileApiTest().testRevertFile();
-
 //        new SeafileApiTest().testRenameFile();
 
 //        new SeafileApiTest().testMoveFile();
 
+//        new SeafileApiTest().testRevertFile();
 
-//        api.deleteFile(client,token,repo_id,"/test.seanote");
+//        new SeafileApiTest().testDeleteFile();
 
+//        new SeafileApiTest().testGetUpdateLink();
 
-//        String updateLink=api.getUpdateLink(client,token,repo_id,"");
-//        System.out.println(updateLink);
-//
-//        api.updateFile(client,token,updateLink,file1,"/test/upload/testfile2.txt");
+//        new SeafileApiTest().testUpdateFile();
 
-//        List<DirectoryEntry> directoryEntries=api.listDirEntriesByP(client,token,repo_id,"/test");
-//        System.out.println(directoryEntries);
+//        new SeafileApiTest().testCreateNewDir();
 
-//        List<DirectoryEntry> directoryEntries3=api.listAllDirEntries(client,token,repo_id);
-//        System.out.println(directoryEntries3);
+//        new SeafileApiTest().testRenameDir();
 
-//        api.createNewDir(client,token,repo_id,"/test2");
-//        api.renameDir(client,token,repo_id,"/test2","test3");
-//        api.deleteDir(client,token,repo_id,"/test3");
+//        new SeafileApiTest().testDeleteDir();
 
-//        String downDirToken=api.getDirDownloadToken(client,token,repo_id,"/","test");
-//        System.out.println("downDirToken = " + downDirToken);
+//        new SeafileApiTest().testGetDirDownloadToken();
+
+        new SeafileApiTest().testGetDirDownloadLink();
 
 //        boolean dirDownloadFlag1 = api.queryZipProgress(client,token,"66b333cb-7800-4829-bb86-e2d3d715b84d");
 //        System.out.println("dirDownloadFlag1 = " + dirDownloadFlag1);
@@ -147,8 +143,16 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
 
-        List<DirectoryEntry> dirs = api.listAllDirEntries(client, token, "0de4d65b-732a-4d13-8304-d4f2bc26437e");
+        List<DirectoryEntry> dirs = api.listAllDirEntries(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a");
         System.out.println(dirs.get(0).getParent_dir());
+    }
+
+    public void testListDirEntriesByP() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        List<DirectoryEntry> dirs = api.listDirEntriesByP(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/");
+        System.out.println(dirs.size());
     }
 
 
@@ -224,7 +228,7 @@ public class SeafileApiTest {
         System.out.println(library.getName());
     }
 
-    public void testGetLibraryHistory(){
+    public void testGetLibraryHistory() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
@@ -232,34 +236,34 @@ public class SeafileApiTest {
         System.out.println(histories.size());
     }
 
-    public void testGetFileDetail(){
+    public void testGetFileDetail() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        FileDetail detail = api.getFileDetail(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/readme.txt");
+        FileDetail detail = api.getFileDetail(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/readme.txt");
         System.out.println(detail.getName());
     }
 
-    public void testGetFileHistory(){
+    public void testGetFileHistory() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        List<FileCommit> fileCommits = api.getFileHistory(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/readme.txt");
+        List<FileCommit> fileCommits = api.getFileHistory(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/readme.txt");
         System.out.println(fileCommits.size());
     }
 
-    public void testRenameFile(){
+    public void testRenameFile() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        api.renameFile(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/about.txt","readme.txt");
+        api.renameFile(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/about.txt", "readme.txt");
     }
 
-    public void testMoveFile(){
+    public void testMoveFile() {
         OkHttpClient client = new OkHttpClient();
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
-        api.moveFile(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/seafile-tutorial.doc","7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/");
+        api.moveFile(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/seafile-tutorial.doc", "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/");
     }
 
     public void testRevertFile() {
@@ -267,6 +271,67 @@ public class SeafileApiTest {
         SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
         String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
         api.revertFile(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/readme.txt", "8621b4883bf87f2b501bdfe4edbd0cc62ed7b33d");
+    }
+
+    public void testDeleteFile() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.deleteFile(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/seafile-tutorial.doc");
+    }
+
+    public void testGetUpdateLink() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        System.out.println(api.getUpdateLink(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/"));
+        System.out.println(api.getUpdateLink(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/"));
+        System.out.println(api.getUpdateLink(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", ""));
+    }
+
+    public void testUpdateFile() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        String updateLink = api.getUpdateLink(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "");
+        api.updateFile(client, token, updateLink, new File("E:/seafile-tutorial.doc"), "/Documents/seafile-tutorial.doc");
+    }
+
+    public void testCreateNewDir() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.createNewDir(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/literature");
+    }
+
+    public void testRenameDir() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.renameDir(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/literature", "food");
+    }
+
+    public void testDeleteDir() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.deleteDir(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/food");
+    }
+
+    public void testGetDirDownloadToken() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        String dirDownloadToken = api.getDirDownloadToken(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/", "Documents");
+        System.out.println(dirDownloadToken);
+    }
+
+    public void testGetDirDownloadLink() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        String dirDownloadToken = api.getDirDownloadToken(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents", "Documents");
+        System.out.println(api.getDirDownloadLink(client, token, dirDownloadToken));
     }
 
 }

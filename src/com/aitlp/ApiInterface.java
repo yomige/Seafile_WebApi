@@ -57,7 +57,7 @@ public interface ApiInterface {
     List<Library> listLibraries(OkHttpClient client, String token);
 
     /**
-     * 列出某资料库下的所有文件夹
+     * 列出某资料库下的所有文件夹（只列目录及子目录，不包括文件）
      *
      * @param client
      * @param token
@@ -67,12 +67,23 @@ public interface ApiInterface {
     List<DirectoryEntry> listAllDirEntries(OkHttpClient client, String token, String repo_id);
 
     /**
+     * 根据路径列出目录下的文件或文件夹（不包括子目录）
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
+    List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p);
+
+    /**
      * 获取上传接口链接
      *
      * @param client
      * @param token
      * @param repo_id
-     * @param p       测试中发现这个链接似乎只会指向资料库的根目录。即使传入了p，所以p似乎是一个无效的参数？
+     * @param p       文件夹路径，测试中发现这个链接似乎只会指向资料库的根目录。即使传入了p，所以p似乎是一个无效的参数？
      * @return
      */
     String getUploadLink(OkHttpClient client, String token, String repo_id, String p);
@@ -244,27 +255,104 @@ public interface ApiInterface {
      */
     boolean revertFile(OkHttpClient client, String token, String repo_id, String p, String commit_id);
 
+    /**
+     * 删除文件
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
     boolean deleteFile(OkHttpClient client, String token, String repo_id, String p);
 
+    /**
+     * 获取更新文件链接(see https://download.seafile.com/published/web-api/v2.1/file-upload.md#user-content-Update%20file)
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p       文件夹路径，传不传无所谓？无效？
+     * @return
+     */
     String getUpdateLink(OkHttpClient client, String token, String repo_id, String p);
 
-    boolean updateFile(OkHttpClient client, String token, String updataLink, File file, String target_file);
+    /**
+     * 更新云端文件内容(文件内容改变，文件ID也改变？)
+     *
+     * @param client
+     * @param token
+     * @param updateLink
+     * @param file        文件流
+     * @param target_file 需要更新的目标文件位置，例如"/Documents/readme.txt",如果文件不存在会返回404
+     * @return
+     */
+    boolean updateFile(OkHttpClient client, String token, String updateLink, File file, String target_file);
 
-    //Directory API
-    List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p);
-
-//    List<DirectoryEntry> listDirectoryEntriesByID(OkHttpClient client,String token,String repo_id,String id);
-
-
+    /**
+     * 创建新文件夹
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
     boolean createNewDir(OkHttpClient client, String token, String repo_id, String p);
 
+    /**
+     * 文件夹重命名
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @param newName 新名字
+     * @return
+     */
     boolean renameDir(OkHttpClient client, String token, String repo_id, String p, String newName);
 
+    /**
+     * 删除文件夹
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
     boolean deleteDir(OkHttpClient client, String token, String repo_id, String p);
 
+    /**
+     * 获取目录下载token（实际操作是压缩）
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param parent_dir 父级目录
+     * @param dirents    要下载的目录
+     * @return
+     */
     String getDirDownloadToken(OkHttpClient client, String token, String repo_id, String parent_dir, String dirents);
 
+    /**
+     * 获取目录下载链接
+     *
+     * @param client
+     * @param token
+     * @param dirDownloadToken 只能使用一次，然后失效
+     * @return
+     */
+    String getDirDownloadLink(OkHttpClient client, String token, String dirDownloadToken);
+
+    /**
+     * 检查是否压缩完成
+     *
+     * @param client
+     * @param token
+     * @param dirDownloadToken 目录压缩token
+     * @return
+     */
     boolean queryZipProgress(OkHttpClient client, String token, String dirDownloadToken);
 
-    String getDirDownloadLink(OkHttpClient client, String token, String dirDownloadToken);
 }

@@ -133,6 +133,41 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
+
+    /**
+     * notice
+     * when you use this method to get the DirectoryEntry of the dir ,the parent_dir maybe is null
+     * if you want to get all parameter in the DirectoryEntry of the dir ,you need to use the next method
+     * List<DirectoryEntry> listAllDirEntries()
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @return
+     */
+    @Override
+    public List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p) {
+        Request request = new Request.Builder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Token " + token)
+                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/dir/?p=" + p)
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                return JSONObject.parseArray(response.body().string(), DirectoryEntry.class);
+            } else {
+                System.out.println(response.code());
+                System.out.println(response.body().string());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public String getUploadLink(OkHttpClient client, String token, String repo_id, String p) {
         Request request = new Request.Builder()
@@ -329,7 +364,7 @@ public class SeafileApi implements ApiInterface {
                 .header("Authorization", "Token " + token)
                 .header("Accept", "application/json")
                 .header("indent", "4")
-                .url(SERVICE_URL + "/api2/accounts/" + email+"/")
+                .url(SERVICE_URL + "/api2/accounts/" + email + "/")
                 .delete()
                 .build();
         try (Response response = client.newCall(request).execute()) {
@@ -550,17 +585,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-
-    /**
-     * look likes that this link is always point to the library's root path , the p maybe a invalid parameter
-     * same of the upload link
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p
-     * @return
-     */
     @Override
     public String getUpdateLink(OkHttpClient client, String token, String repo_id, String p) {
         Request request = new Request.Builder()
@@ -576,30 +600,14 @@ public class SeafileApi implements ApiInterface {
                 System.out.println(response.code());
                 System.out.println(response.body().string());
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * update file method
-     * <p>
-     * in my test ,the request parameter 'filename' maybe is invalid
-     * so , when you use this method ,the change of the cloud file is it's content
-     * and i find that ,when the content is changed ,the id of this file will changed too ?
-     * you can do test more
-     *
-     * @param client
-     * @param token
-     * @param updataLink
-     * @param file
-     * @param target_file the full path of the targe_file in the library
-     * @return
-     */
     @Override
-    public boolean updateFile(OkHttpClient client, String token, String updataLink, File file, String target_file) {
+    public boolean updateFile(OkHttpClient client, String token, String updateLink, File file, String target_file) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
 
@@ -613,7 +621,7 @@ public class SeafileApi implements ApiInterface {
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", "Token " + token)
                 .post(body)
-                .url(updataLink)
+                .url(updateLink)
                 .build();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
@@ -626,77 +634,8 @@ public class SeafileApi implements ApiInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return false;
     }
-
-    /**
-     * notice
-     * when you use this method to get the DirectoryEntry of the dir ,the parent_dir maybe is null
-     * if you want to get all parameter in the DirectoryEntry of the dir ,you need to use the next method
-     * List<DirectoryEntry> listAllDirEntries()
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p
-     * @return
-     */
-    @Override
-    public List<DirectoryEntry> listDirEntriesByP(OkHttpClient client, String token, String repo_id, String p) {
-        Request request = new Request.Builder()
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Token " + token)
-                .url(SERVICE_URL + "/api2/repos/" + repo_id + "/dir/?p=" + p)
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return JSONObject.parseArray(response.body().string(), DirectoryEntry.class);
-            } else {
-                System.out.println(response.code());
-                System.out.println(response.body().string());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-//    /**
-//     * look likes that this method is not work
-//     * The corresponding url of web api is:
-//     * https://manual.seafile.com/develop/web_api_v2.1.html#list-directory-entries
-//     *
-//     * @param client
-//     * @param token
-//     * @param repo_id
-//     * @param id
-//     * @return
-//     */
-//    @Override
-//    public List<DirectoryEntry> listDirectoryEntriesByID(OkHttpClient client, String token, String repo_id,String id) {
-//        Request request=new Request.Builder()
-//                .header("Content-Type","application/x-www-form-urlencoded")
-//                .header("Authorization","Token "+token)
-//                .url(SERVICE_URL+"/api2/repos/"+repo_id+"/dir/?oid="+id)
-//                .get()
-//                .build();
-//        try (Response response=client.newCall(request).execute()){
-//            if (response.isSuccessful()){
-//                return JSONObject.parseArray(response.body().string(),DirectoryEntry.class);
-//            }else {
-//                System.out.println(response.code());
-//                System.out.println(response.body().string());
-//            }
-//
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
 
     @Override
     public boolean createNewDir(OkHttpClient client, String token, String repo_id, String p) {
@@ -724,14 +663,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-    /**
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p       startswith "/"
-     * @param newName Not startswith "/"
-     * @return
-     */
     @Override
     public boolean renameDir(OkHttpClient client, String token, String repo_id, String p, String newName) {
         RequestBody body = new FormBody.Builder()
@@ -782,17 +713,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-    /**
-     * get the download token for the dir download
-     * the downloadToken is the zip_token in web api document
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param parent_dir the parent path, use "/" when the parent path is root path of the library
-     * @param dirents    NOT startswith "/" of endswith "/"
-     * @return
-     */
     @Override
     public String getDirDownloadToken(OkHttpClient client, String token, String repo_id, String parent_dir, String dirents) {
         Request request = new Request.Builder()
@@ -816,18 +736,14 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-    /**
-     * use this method to query the zip progress of the dir download
-     * before you use the dir download method , you need to ensure the zip progress of the dir is finish
-     * <p>
-     * if the progress id finish , this method will return true
-     * else return false and it means that you can not download the dir by download-token
-     *
-     * @param client
-     * @param token
-     * @param dirDownloadToken
-     * @return
-     */
+    @Override
+    public String getDirDownloadLink(OkHttpClient client, String token, String dirDownloadToken) {
+        if (queryZipProgress(client, token, dirDownloadToken)) {
+            return FILE_SERVER_ROOT + "/zip/" + dirDownloadToken;
+        }
+        return null;
+    }
+
     @Override
     public boolean queryZipProgress(OkHttpClient client, String token, String dirDownloadToken) {
         Request request = new Request.Builder()
@@ -858,27 +774,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-    /**
-     * get the download link of the dir download
-     * <p>
-     * before generate the download link
-     * this method will use queryZipProgress() method to checkoout the dirDownloadToken(zip_token)
-     * if the dirDownloadToken is invalid ,this method will return null
-     * <p>
-     * a download link can only use once ,after that , the dirDownloadToken of the link will be invalid
-     *
-     * @param client
-     * @param token
-     * @param dirDownloadToken
-     * @return
-     */
-    @Override
-    public String getDirDownloadLink(OkHttpClient client, String token, String dirDownloadToken) {
-        if (queryZipProgress(client, token, dirDownloadToken)) {
-            return FILE_SERVER_ROOT + "/zip/" + dirDownloadToken;
-        }
-        return null;
-    }
 
     /**
      * parse json String to JsonObject
@@ -887,8 +782,6 @@ public class SeafileApi implements ApiInterface {
      * @return
      */
     private JSONObject parseJson(String jsonStr) {
-        //show the json Str for test
-//        System.out.println(jsonStr);
         return JSON.parseObject(jsonStr, Feature.AutoCloseSource);
     }
 }
