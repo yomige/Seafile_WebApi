@@ -1,11 +1,9 @@
 package com.aitlp.test;
 
+import com.aitlp.data.*;
 import com.aitlp.impl.SeafileApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.aitlp.data.DirectoryEntry;
-import com.aitlp.data.Library;
-import com.aitlp.data.UploadFileRes;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -44,42 +42,25 @@ public class SeafileApiTest {
 
 //        new SeafileApiTest().testCreateNewAccount();
 
-        new SeafileApiTest().testDeleteAccount();
+//        new SeafileApiTest().testDeleteAccount();
 
-//        List<StarredFile> starredFiles = api.listStarredFiles(client,token);
-//        System.out.println(starredFiles.get(0));
-//
+//        new SeafileApiTest().testListStarredFiles();
 
-//        String deleteLibName="seanote";
-//        String delete_repo_id;
-//        List<Library> libraries=api.listLibraries(client,token);
-//        for (Library library:libraries){
-//            if(library.getName().equals(deleteLibName)){
-//                delete_repo_id=library.getId();
-//                System.out.println(delete_repo_id);
-//                api.deleteLibrary(client,token,delete_repo_id);
-//            }
-//        }
+//        new SeafileApiTest().testGetLibraryInfo();
 
+//        new SeafileApiTest().testGetLibraryHistory();
 
-//        String repo_id = api.listLibraries(client, token).get(0).getId();
-//        System.out.println("the repo_id = "+repo_id);
-//        Library libraryInfo = api.getLibraryInfo(client, token, repo_id);
-//        System.out.println("the library name of the repo_id = " + libraryInfo.getName());
+//        new SeafileApiTest().testGetFileDetail();
 
-//        List<LibraryHistory> historyLists=api.getLibraryHistory(client,token,repo_id);
-//        System.out.println(historyLists.get(0).getName());
+//        new SeafileApiTest().testGetFileHistory();
 
-//        FileDetail fileDetail = api.getFileDetail(client, token, repo_id, "/头像.png");
-//        String fileName = fileDetail.getName();
-//        String fileId = fileDetail.getId();
-//
-//        List<FileCommit> fileHistories=api.getFileHistory(client,token,repo_id,"/头像.png");
-//        System.out.println(fileHistories.get(0).getId());
+        new SeafileApiTest().testRevertFile();
+
+//        new SeafileApiTest().testRenameFile();
+
+//        new SeafileApiTest().testMoveFile();
 
 
-//        api.renameFile(client,token,repo_id,"/test.seanote","test2.seanote");
-//        api.moveFile(client,token,repo_id,"/test2.seanote",repo_id,"/test");
 //        api.deleteFile(client,token,repo_id,"/test.seanote");
 
 
@@ -227,5 +208,65 @@ public class SeafileApiTest {
         api.deleteAccount(client, token, "wwb@gmail.com");
     }
 
+    public void testListStarredFiles() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        List<StarredFile> starredFiles = api.listStarredFiles(client, token);
+        System.out.println(starredFiles.size());
+    }
+
+    public void testGetLibraryInfo() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        Library library = api.getLibraryInfo(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a");
+        System.out.println(library.getName());
+    }
+
+    public void testGetLibraryHistory(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        List<LibraryHistory> histories = api.getLibraryHistory(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a");
+        System.out.println(histories.size());
+    }
+
+    public void testGetFileDetail(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        FileDetail detail = api.getFileDetail(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/readme.txt");
+        System.out.println(detail.getName());
+    }
+
+    public void testGetFileHistory(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        List<FileCommit> fileCommits = api.getFileHistory(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/readme.txt");
+        System.out.println(fileCommits.size());
+    }
+
+    public void testRenameFile(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.renameFile(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/about.txt","readme.txt");
+    }
+
+    public void testMoveFile(){
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.moveFile(client,token,"7f178180-27e3-4f97-b4b1-7f720795938a","/seafile-tutorial.doc","7f178180-27e3-4f97-b4b1-7f720795938a","/Documents/");
+    }
+
+    public void testRevertFile() {
+        OkHttpClient client = new OkHttpClient();
+        SeafileApi api = new SeafileApi(SERVICE_URL, FILE_SERVER_ROOT);
+        String token = api.obtainAuthToken(client, "me@inspur.com", "Passw0rd");
+        api.revertFile(client, token, "7f178180-27e3-4f97-b4b1-7f720795938a", "/Documents/readme.txt", "8621b4883bf87f2b501bdfe4edbd0cc62ed7b33d");
+    }
 
 }

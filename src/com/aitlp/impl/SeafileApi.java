@@ -347,14 +347,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-
-    /**
-     * list all starred files
-     *
-     * @param client
-     * @param token
-     * @return
-     */
     @Override
     public List<StarredFile> listStarredFiles(OkHttpClient client, String token) {
         Request request = new Request.Builder()
@@ -373,16 +365,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-
-    /**
-     * use the repo_id to get the library info
-     * the repo_id can get by method : List<Library> listLibraries(OkHttpClient client, String token)
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @return
-     */
     @Override
     public Library getLibraryInfo(OkHttpClient client, String token, String repo_id) {
         Request request = new Request.Builder()
@@ -419,16 +401,6 @@ public class SeafileApi implements ApiInterface {
         return null;
     }
 
-
-    /**
-     * get file detail
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p       p is the full path of the file, the root path is it's library
-     * @return
-     */
     @Override
     public FileDetail getFileDetail(OkHttpClient client, String token, String repo_id, String p) {
         Request request = new Request.Builder()
@@ -444,7 +416,6 @@ public class SeafileApi implements ApiInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -465,7 +436,6 @@ public class SeafileApi implements ApiInterface {
         }
         return null;
     }
-
 
     @Override
     public boolean renameFile(OkHttpClient client, String token, String repo_id, String p, String newName) {
@@ -489,7 +459,6 @@ public class SeafileApi implements ApiInterface {
                 System.out.println(response.body().string());
                 return false;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -526,16 +495,6 @@ public class SeafileApi implements ApiInterface {
         return false;
     }
 
-    /**
-     * this method never had test
-     *
-     * @param client
-     * @param token
-     * @param repo_id
-     * @param p
-     * @param commit_id
-     * @return
-     */
     @Override
     public boolean revertFile(OkHttpClient client, String token, String repo_id, String p, String commit_id) {
         RequestBody body = new FormBody.Builder()

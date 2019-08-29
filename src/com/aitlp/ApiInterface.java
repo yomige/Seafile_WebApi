@@ -156,25 +156,92 @@ public interface ApiInterface {
      */
     boolean deleteAccount(OkHttpClient client, String token, String email);
 
-
-    //Starred File API
+    /**
+     * 星标文件列表
+     *
+     * @param client
+     * @param token
+     * @return
+     */
     List<StarredFile> listStarredFiles(OkHttpClient client, String token);
 
-
+    /**
+     * 获取资料库信息
+     *
+     * @param client
+     * @param token
+     * @param repo_id 资料库ID
+     * @return
+     */
     Library getLibraryInfo(OkHttpClient client, String token, String repo_id);
 
+    /**
+     * 查看资料库历史
+     *
+     * @param client
+     * @param token
+     * @param repo_id 资料库ID
+     * @return
+     */
     List<LibraryHistory> getLibraryHistory(OkHttpClient client, String token, String repo_id);
 
-
+    /**
+     * 文件明细
+     *
+     * @param client
+     * @param token
+     * @param repo_id 仓库地址
+     * @param p       文件路径，入"/Documents/readme.txt"
+     * @return
+     */
     FileDetail getFileDetail(OkHttpClient client, String token, String repo_id, String p);
 
+    /**
+     * 文件历史
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p       文件路径，入"/Documents/readme.txt"
+     * @return
+     */
     List<FileCommit> getFileHistory(OkHttpClient client, String token, String repo_id, String p);
 
-
+    /**
+     * 文件重命名（接口有问题？命名成功，但301跳转的地址不对 已提 issue:https://github.com/haiwen/seafile/issues/2238）
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p       文件路径，入"/Documents/readme.txt"
+     * @param newName 新的文件名
+     * @return
+     */
     boolean renameFile(OkHttpClient client, String token, String repo_id, String p, String newName);
 
+    /**
+     * 移动文件
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @param dst_repo 目标资料库
+     * @param dst_dir  目标路径
+     * @return
+     */
     boolean moveFile(OkHttpClient client, String token, String repo_id, String p, String dst_repo, String dst_dir);
 
+    /**
+     * 回滚文件
+     *
+     * @param client
+     * @param token
+     * @param repo_id
+     * @param p
+     * @param commit_id 历史版本号
+     * @return
+     */
     boolean revertFile(OkHttpClient client, String token, String repo_id, String p, String commit_id);
 
     boolean deleteFile(OkHttpClient client, String token, String repo_id, String p);
