@@ -7,6 +7,8 @@ Seafile_webapi is the Web api of Seafile implemented by java,all of them base on
     - obtainAuthToken()
     - checkAccountInfo()
     - getServerInformation()
+    - createNewAccount()
+    - deleteAccount()
  - Starred Files
     - listStarredFiles()
  - Library
